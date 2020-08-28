@@ -1207,7 +1207,8 @@ XXL-JOB会为每次调度请求生成一个单独的日志文件，需要通过 
 - Java语言任务获取分片参数方式：BEAN、GLUE模式(Java)
 ```
 // 可参考Sample示例执行器中的示例任务"ShardingJobHandler"了解试用 
-ShardingUtil.ShardingVO shardingVO = ShardingUtil.getShardingVo();
+int shardIndex = XxlJobContext.getXxlJobContext().getShardIndex();
+int shardTotal = XxlJobContext.getXxlJobContext().getShardTotal();
 ```
 - 脚本语言任务获取分片参数方式：GLUE模式(Shell)、GLUE模式(Python)、GLUE模式(Nodejs)
 ```
@@ -1988,9 +1989,15 @@ data: post-data
 - 1、Cron编辑器增强：Cron编辑器修改cron时可实时查看最近运行时间;
 - 2、Cron编辑器问题修复：修复小概率情况下cron单个字段修改时导致其他字段被重置问题；
 - 3、邮箱告警配置优化：将"spring.mail.from"与"spring.mail.username"属性拆分开，更加灵活的支持一些无密码邮箱服务；
-- 4、多个项目依赖升级至较新稳定版本，如netty、spring、springboot等；
-- 5、[迭代中] 新增任务属性 "XxlJobContent" ，统一维护任务上下文信息，方便运行时存取任务相关信息；
-- 6、[规划中]任务触发参数优化：支持选择 "Cron触发"、"固定间隔时间触发"、"指定时间点触发"、"不选择" 等；
+- 4、多个项目依赖升级至较新稳定版本，如netty、groovy、spring、springboot、mybatis等；
+- 5、通用HTTP任务Handler（httpJobHandler）优化：修复 "setDoOutput(true)" 导致任务请求GetMethod失效问题；
+- 6、新增任务属性 "XxlJobContent" ，统一维护任务上下文信息，包括任务ID、分片参数等，方便运行时存取任务相关信息；
+    - 6.1、废弃 "ShardingUtil" 组件：改用 "XxlJobContext.getXxlJobContext().getShardIndex()/getShardTotal();" 获取分片参数；
+    - 6.2、日志组件逻辑调整：日志组件改为通过 XxlJobContent 获取任务上下文并匹配写入对应日志文件；
+- 7、页面redirect跳转后https变为http问题修复；
+- 8、调度线程连接池优化，修复连接有效性校验超时问题。
+- 9、轮训路由策略优化，修复小概率下并发问题；
+- 10、[规划中]任务触发参数优化：支持选择 "Cron触发"、"固定间隔时间触发"、"指定时间点触发"、"不选择" 等；
 
 ### 7.32 版本 v2.3.0 Release Notes[规划中]
 - 1、[规划中]多数据库支持，DAO层通过JPA实现，不限制数据库类型；
